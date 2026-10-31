@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Onboarding Buddy System</title>
+
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Custom Tailwind config for brand colours -->
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              brand: {
+                50:  '#eff6ff',
+                100: '#dbeafe',
+                500: '#3b82f6',
+                600: '#2563eb',
+                700: '#1d4ed8',
+              },
+              accent: {
+                400: '#fb923c',
+                500: '#f97316',
+                600: '#ea580c',
+              },
+            },
+          },
+        },
+      };
+    </script>
+
+    <!-- Custom stylesheet (animations, scrollbar, etc.) -->
+    <link rel="stylesheet" href="style.css" />
+  </head>
+
+  <body class="bg-slate-50 text-slate-800 antialiased">
+
+    <!-- =========================================================
+         HEADER
+    ========================================================= -->
+    <header class="bg-brand-700 text-white shadow-lg sticky top-0 z-50">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between gap-4">
+        <div class="flex items-center gap-3">
+          <!-- Logo icon -->
+          <span class="bg-accent-500 text-white rounded-xl p-2 flex items-center justify-center">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
+            </svg>
+          </span>
+          <div>
+            <h1 class="text-lg sm:text-xl font-bold leading-tight">Onboarding Buddy System</h1>
+            <p class="text-brand-100 text-xs hidden sm:block">Selamat datang di platform onboarding karyawan baru</p>
+          </div>
+        </div>
+
+        <!-- Navigation tabs -->
+        <nav class="flex gap-1 sm:gap-2">
+          <button data-tab="dashboard"
+            class="nav-tab active-tab px-3 py-1.5 rounded-lg text-sm font-medium transition-all">
+            📊 Dashboard
+          </button>
+          <button data-tab="buddies"
+            class="nav-tab px-3 py-1.5 rounded-lg text-sm font-medium transition-all">
+            👥 Buddy
+          </button>
+          <button data-tab="tasks"
+            class="nav-tab px-3 py-1.5 rounded-lg text-sm font-medium transition-all">
+            ✅ Tasks
+          </button>
+        </nav>
+      </div>
+    </header>
+
+    <!-- =========================================================
+         TOAST NOTIFICATION
+    ========================================================= -->
+    <div id="toast" class="toast fixed top-20 right-4 z-50 hidden" role="alert" aria-live="polite"></div>
+
+    <!-- =========================================================
+         MAIN CONTENT
+    ========================================================= -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+
+      <!-- ── DASHBOARD TAB ──────────────────────────────────── -->
+      <section id="tab-dashboard" class="tab-content space-y-6">
+        <h2 class="text-2xl font-bold text-slate-700">Dashboard Ringkasan</h2>
+
+        <!-- Summary Cards -->
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-4" id="summary-cards">
+          <!-- Cards rendered by JS -->
+        </div>
+
+        <!-- Progress Bar -->
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
+          <div class="flex items-center justify-between mb-3">
+            <span class="font-semibold text-slate-700">Progress Onboarding</span>
+            <span id="progress-label" class="text-accent-500 font-bold text-lg">0%</span>
+          </div>
+          <div class="w-full bg-slate-200 rounded-full h-4 overflow-hidden">
+            <div id="progress-bar"
+              class="h-4 rounded-full progress-bar-fill transition-all duration-700"
+              style="width: 0%"></div>
+          </div>
+          <p class="text-slate-500 text-sm mt-2" id="progress-sub"></p>
+        </div>
+
+        <!-- Recent tasks preview -->
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
+          <h3 class="font-semibold text-slate-700 mb-4">Task Terbaru</h3>
+          <ul id="recent-tasks" class="space-y-2 text-sm text-slate-600">
+            <li class="text-slate-400 italic">Belum ada task.</li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- ── BUDDY TAB ──────────────────────────────────────── -->
+      <section id="tab-buddies" class="tab-content hidden space-y-6">
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+          <h2 class="text-2xl font-bold text-slate-700">Kelola Buddy</h2>
+          <button id="btn-add-buddy"
+            class="btn-primary flex items-center gap-2 self-start sm:self-auto">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
+            </svg>
+            Tambah Buddy
+          </button>
+        </div>
+
+        <!-- Search buddy -->
+        <div class="relative">
+          <span class="absolute inset-y-0 left-3 flex items-center text-slate-400">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35M17 11A6 6 0 105 11a6 6 0 0012 0z" />
+            </svg>
+          </span>
+          <input id="search-buddy" type="search" placeholder="Cari nama atau keahlian buddy..."
+            class="w-full pl-9 pr-4 py-2.5 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 bg-white" />
+        </div>
+
+        <!-- Buddy list -->
+        <div id="buddy-list" class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
+          <!-- Cards rendered by JS -->
+        </div>
+      </section>
+
+      <!-- ── TASKS TAB ──────────────────────────────────────── -->
+      <section id="tab-tasks" class="tab-content hidden space-y-6">
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+          <h2 class="text-2xl font-bold text-slate-700">Onboarding Checklist</h2>
+          <button id="btn-add-task"
+            class="btn-primary flex items-center gap-2 self-start sm:self-auto">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
+            </svg>
+            Tambah Task
+          </button>
+        </div>
+
+        <!-- Search + filter -->
+        <div class="flex flex-col sm:flex-row gap-3">
+          <div class="relative flex-1">
+            <span class="absolute inset-y-0 left-3 flex items-center text-slate-400">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35M17 11A6 6 0 105 11a6 6 0 0012 0z" />
+              </svg>
+            </span>
+            <input id="search-task" type="search" placeholder="Cari judul task..."
+              class="w-full pl-9 pr-4 py-2.5 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 bg-white" />
+          </div>
+          <!-- Filter buttons -->
+          <div class="flex gap-2" role="group" aria-label="Filter task">
+            <button data-filter="all"   class="filter-btn active-filter px-4 py-2 rounded-xl text-sm font-medium transition-all">Semua</button>
+            <button data-filter="active" class="filter-btn px-4 py-2 rounded-xl text-sm font-medium transition-all">Aktif</button>
+            <button data-filter="completed" class="filter-btn px-4 py-2 rounded-xl text-sm font-medium transition-all">Selesai</button>
+          </div>
+        </div>
+
+        <!-- Task list -->
+        <div id="task-list" class="space-y-3">
+          <!-- Cards rendered by JS -->
+        </div>
+      </section>
+
+    </main>
+
+    <!-- =========================================================
+         FOOTER
+    ========================================================= -->
+    <footer class="mt-12 border-t border-slate-200 bg-white">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 text-center text-slate-400 text-sm">
+        © 2025 Onboarding Buddy System &mdash; Dibuat dengan ❤️ untuk karyawan baru
+      </div>
+    </footer>
+
+    <!-- =========================================================
+         MODAL (shared for buddy & task forms)
+    ========================================================= -->
+    <div id="modal-overlay"
+      class="modal-overlay fixed inset-0 bg-black/50 z-40 hidden items-center justify-center p-4"
+      role="dialog" aria-modal="true" aria-labelledby="modal-title">
+      <div id="modal-box"
+        class="bg-white rounded-2xl shadow-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto p-6 sm:p-8 modal-box">
+        <div class="flex items-center justify-between mb-6">
+          <h2 id="modal-title" class="text-xl font-bold text-slate-800"></h2>
+          <button id="modal-close"
+            class="text-slate-400 hover:text-slate-700 transition-colors rounded-lg p-1"
+            aria-label="Tutup modal">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+        <!-- Form injected by JS -->
+        <div id="modal-body"></div>
+      </div>
+    </div>
+
+    <!-- Main script -->
+    <script src="script.js"></script>
+  </body>
+</html>
